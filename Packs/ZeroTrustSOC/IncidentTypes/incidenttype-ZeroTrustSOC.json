@@ -1,11 +1,11 @@
 {
-    "id": "ON2IT Zero Trust SOC Case",
+    "id": "ZeroTrustSOC Case",
     "version": -1,
     "fromVersion": "6.10.0",
     "vcShouldIgnore": false,
     "locked": false,
-    "name": "ON2IT Zero Trust SOC Case",
-    "prevName": "ON2IT Zero Trust SOC Case",
+    "name": "ZeroTrustSOC Case",
+    "prevName": "ZeroTrustSOC Case",
     "color": "#00a1c2",
     "hours": 0,
     "days": 3,
@@ -22,5 +22,5 @@
     "autoSentRepInvestigationEnabled": false,
     "preProcessingScript": "",
     "closureScript": "",
-    "layout": "ON2IT Zero Trust SOC Case"
+    "layout": "ZeroTrustSOC Case"
 }

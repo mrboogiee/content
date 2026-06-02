@@ -1,11 +1,11 @@
 category: Case Management
 commonfields:
-  id: On2ITZeroTrustSOC
+  id: ZeroTrustSOC
   version: -1
-name: On2ITZeroTrustSOC
-display: ON2IT Zero Trust SOC
+name: ZeroTrustSOC
+display: ZeroTrustSOC
 fromversion: 6.10.0
-description: Integrate Cortex XSIAM/XSOAR with the ON2IT Zero Trust SOC. Search Protect Surfaces by content type (cloud resource IDs, hostnames, IPs, identities), link cases, and mirror case state in both directions.
+description: Integrate Cortex XSIAM/XSOAR with ZeroTrustSOC. Search Protect Surfaces by content type (cloud resource IDs, hostnames, IPs, identities), link cases, and mirror case state in both directions.
 configuration:
 - name: url
   display: Server URL

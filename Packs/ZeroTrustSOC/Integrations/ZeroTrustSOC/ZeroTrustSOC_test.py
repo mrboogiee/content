@@ -1,4 +1,4 @@
-"""Unit tests for the ON2IT Zero Trust SOC integration.
+"""Unit tests for the ZeroTrustSOC integration.
 
 These tests do not hit the network: they stub HTTP via ``requests_mock`` and
 exercise the command functions directly with a real ``Client`` instance.

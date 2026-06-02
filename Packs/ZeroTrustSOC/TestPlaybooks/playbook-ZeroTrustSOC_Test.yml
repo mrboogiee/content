@@ -1,6 +1,6 @@
-id: ON2IT Zero Trust SOC - Test
+id: ZeroTrustSOC - Test
 version: -1
-name: ON2IT Zero Trust SOC - Test
+name: ZeroTrustSOC - Test
 description: Integration smoke test — verifies the API token is valid and core commands return data.
 fromversion: 6.10.0
 starttaskid: "0"
@@ -41,10 +41,10 @@ tasks:
       version: -1
       name: Test module
       description: Verify authentication and basic API reachability.
-      script: On2ITZeroTrustSOC|||on2it-protectsurface-list
+      script: ZeroTrustSOC|||on2it-protectsurface-list
       type: regular
       iscommand: true
-      brand: On2ITZeroTrustSOC
+      brand: ZeroTrustSOC
     nexttasks:
       '#none#':
       - "2"
@@ -73,10 +73,10 @@ tasks:
       version: -1
       name: List cases
       description: Verify case API access.
-      script: On2ITZeroTrustSOC|||on2it-case-list
+      script: ZeroTrustSOC|||on2it-case-list
       type: regular
       iscommand: true
-      brand: On2ITZeroTrustSOC
+      brand: ZeroTrustSOC
     nexttasks:
       '#none#':
       - "3"

@@ -1,4 +1,4 @@
-"""ON2IT Zero Trust SOC integration for Cortex XSIAM/XSOAR.
+"""ZeroTrustSOC integration for Cortex XSIAM/XSOAR.
 
 The ON2IT public API (``https://api.on2it.net/v3``) wraps almost every list,
 POST and PATCH payload in an ``{"items": [...]}`` envelope. This module hides
@@ -904,7 +904,7 @@ def get_remote_data_command(client: Client, args: dict[str, Any], close_incident
                 "Type": EntryType.NOTE,
                 "Contents": {
                     "dbotIncidentClose": True,
-                    "closeReason": "Closed from ON2IT Zero Trust SOC.",
+                    "closeReason": "Closed from ZeroTrustSOC.",
                 },
                 "ContentsFormat": EntryFormat.JSON,
             }
@@ -942,7 +942,7 @@ def update_remote_system_command(client: Client, args: dict[str, Any], close_on2
 def get_mapping_fields_command() -> GetMappingFieldsResponse:
     """Expose the ON2IT case fields that XSIAM admins may map outbound."""
     response = GetMappingFieldsResponse()
-    scheme = SchemeTypeMapping(type_name="ON2IT Zero Trust SOC Case")
+    scheme = SchemeTypeMapping(type_name="ZeroTrustSOC Case")
     for field in (
         "subject",
         "priority",
@@ -1007,7 +1007,7 @@ def main() -> None:
     params = demisto.params()
     args = demisto.args()
     command = demisto.command()
-    demisto.debug(f"On2ITZeroTrustSOC: command={command}")
+    demisto.debug(f"ZeroTrustSOC: command={command}")
 
     try:
         client = _build_client(params)
