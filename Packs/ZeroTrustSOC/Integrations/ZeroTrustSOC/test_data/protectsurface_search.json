@@ -1,0 +1,12 @@
+{
+    "items": [
+        {
+            "id": "ps-001",
+            "name": "Crown Jewels DB",
+            "description": "Customer billing database cluster",
+            "in_control_boundary": true,
+            "in_zero_trust_focus": true,
+            "uniqueness_key": "crown-jewels-db"
+        }
+    ]
+}

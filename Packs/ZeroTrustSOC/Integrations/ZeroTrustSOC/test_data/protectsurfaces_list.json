@@ -1,0 +1,30 @@
+{
+    "items": [
+        {
+            "id": "ps-001",
+            "name": "Crown Jewels DB",
+            "description": "Customer billing database cluster",
+            "uniqueness_key": "crown-jewels-db",
+            "in_control_boundary": true,
+            "in_zero_trust_focus": true,
+            "maturity": {"step_1": true, "step_2": true, "step_3": false, "step_4": false, "step_5": false},
+            "compliance_tags": ["pci"],
+            "data_tags": ["pii"],
+            "soc_tags": ["high-value"],
+            "customer_labels": {"owner": "platform"}
+        },
+        {
+            "id": "ps-002",
+            "name": "Public Web",
+            "description": "Customer-facing marketing site",
+            "uniqueness_key": "public-web",
+            "in_control_boundary": true,
+            "in_zero_trust_focus": false,
+            "maturity": {"step_1": true, "step_2": false, "step_3": false, "step_4": false, "step_5": false},
+            "compliance_tags": [],
+            "data_tags": [],
+            "soc_tags": [],
+            "customer_labels": {}
+        }
+    ]
+}

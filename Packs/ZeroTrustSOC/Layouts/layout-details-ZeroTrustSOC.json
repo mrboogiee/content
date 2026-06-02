@@ -1,0 +1,186 @@
+{
+    "id": "ON2IT Zero Trust SOC Case",
+    "name": "ON2IT Zero Trust SOC Case Layout",
+    "fromVersion": "6.10.0",
+    "version": -1,
+    "typeId": "ON2IT Zero Trust SOC Case",
+    "kind": "details",
+    "detailsV2": {
+        "tabs": [
+            {
+                "id": "on2it-case-details",
+                "name": "Case Details",
+                "sections": [
+                    {
+                        "displayType": "ROW",
+                        "h": 2,
+                        "i": "on2it-case-section",
+                        "isVisible": true,
+                        "items": [
+                            {
+                                "endCol": 1,
+                                "fieldId": "on2itcasenumber",
+                                "height": 22,
+                                "id": "on2it-case-number-field",
+                                "index": 0,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "on2itcasetype",
+                                "height": 22,
+                                "id": "on2it-case-type-field",
+                                "index": 1,
+                                "sectionItemType": "field",
+                                "startCol": 1
+                            },
+                            {
+                                "endCol": 1,
+                                "fieldId": "on2itcasestate",
+                                "height": 22,
+                                "id": "on2it-case-state-field",
+                                "index": 2,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "on2itresolutionstate",
+                                "height": 22,
+                                "id": "on2it-resolution-state-field",
+                                "index": 3,
+                                "sectionItemType": "field",
+                                "startCol": 1
+                            },
+                            {
+                                "endCol": 1,
+                                "fieldId": "on2itprimarycontact",
+                                "height": 22,
+                                "id": "on2it-primary-contact-field",
+                                "index": 4,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "on2itescalated",
+                                "height": 22,
+                                "id": "on2it-escalated-field",
+                                "index": 5,
+                                "sectionItemType": "field",
+                                "startCol": 1
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "on2itcaseid",
+                                "height": 22,
+                                "id": "on2it-case-id-field",
+                                "index": 6,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            }
+                        ],
+                        "maxW": 2,
+                        "minH": 1,
+                        "moved": false,
+                        "name": "ON2IT Case",
+                        "static": false,
+                        "w": 2,
+                        "x": 0,
+                        "y": 0
+                    }
+                ]
+            },
+            {
+                "id": "on2it-zero-trust-context",
+                "name": "Zero Trust Context",
+                "sections": [
+                    {
+                        "displayType": "ROW",
+                        "h": 2,
+                        "i": "on2it-protect-surfaces-section",
+                        "isVisible": true,
+                        "items": [
+                            {
+                                "endCol": 2,
+                                "fieldId": "on2itprotectsurfaces",
+                                "height": 120,
+                                "id": "on2it-protect-surfaces-field",
+                                "index": 0,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            }
+                        ],
+                        "maxW": 2,
+                        "minH": 1,
+                        "moved": false,
+                        "name": "Protect Surfaces",
+                        "static": false,
+                        "w": 2,
+                        "x": 0,
+                        "y": 0
+                    }
+                ]
+            },
+            {
+                "id": "on2it-investigation",
+                "name": "Investigation",
+                "sections": [
+                    {
+                        "displayType": "ROW",
+                        "h": 2,
+                        "i": "on2it-investigation-section",
+                        "isVisible": true,
+                        "items": [
+                            {
+                                "endCol": 1,
+                                "fieldId": "severity",
+                                "height": 22,
+                                "id": "on2it-investigation-severity-field",
+                                "index": 0,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "occurred",
+                                "height": 22,
+                                "id": "on2it-investigation-occurred-field",
+                                "index": 1,
+                                "sectionItemType": "field",
+                                "startCol": 1
+                            },
+                            {
+                                "endCol": 1,
+                                "fieldId": "owner",
+                                "height": 22,
+                                "id": "on2it-investigation-owner-field",
+                                "index": 2,
+                                "sectionItemType": "field",
+                                "startCol": 0
+                            },
+                            {
+                                "endCol": 2,
+                                "fieldId": "playbookid",
+                                "height": 22,
+                                "id": "on2it-investigation-playbook-field",
+                                "index": 3,
+                                "sectionItemType": "field",
+                                "startCol": 1
+                            }
+                        ],
+                        "maxW": 2,
+                        "minH": 1,
+                        "moved": false,
+                        "name": "Investigation",
+                        "static": false,
+                        "w": 2,
+                        "x": 0,
+                        "y": 0
+                    }
+                ]
+            }
+        ]
+    }
+}

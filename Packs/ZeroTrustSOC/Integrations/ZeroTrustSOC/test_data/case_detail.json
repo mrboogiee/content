@@ -1,0 +1,21 @@
+{
+    "items": [
+        {
+            "id": "case-aaa",
+            "case_number": "C-1001",
+            "case_type": "securityincident",
+            "subject": "Suspicious login from new geo",
+            "state": "in_progress",
+            "resolution_state": "pending",
+            "primary_contact_email": "soc@example.com",
+            "creation_date": 1714400000,
+            "last_update": 1714500000,
+            "priority": 2,
+            "escalated": false,
+            "history_of_notes": [
+                {"content": "Initial triage complete.", "timestamp": 1714400500},
+                {"content": "Contacted user, awaiting response.", "timestamp": 1714450000}
+            ]
+        }
+    ]
+}

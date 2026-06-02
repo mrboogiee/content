@@ -1,0 +1,108 @@
+{
+    "defaultIncidentType": "ON2IT Zero Trust SOC Case",
+    "description": "Maps incoming ON2IT cases to XSIAM incident fields.",
+    "feed": false,
+    "id": "ON2IT Zero Trust SOC Case-mapper-incoming",
+    "mapping": {
+        "ON2IT Zero Trust SOC Case": {
+            "dontMapEventToLabels": false,
+            "internalMapping": {
+                "name": {
+                    "complex": {
+                        "accessor": "",
+                        "filters": [],
+                        "root": "subject",
+                        "transformers": [
+                            {
+                                "args": {
+                                    "prefix": {
+                                        "isContext": false,
+                                        "value": "ON2IT [${case_number}] "
+                                    },
+                                    "suffix": {
+                                        "isContext": false,
+                                        "value": ""
+                                    }
+                                },
+                                "operator": "concat"
+                            }
+                        ]
+                    },
+                    "simple": ""
+                },
+                "severity": {
+                    "complex": {
+                        "filters": [],
+                        "root": "priority",
+                        "transformers": [
+                            {
+                                "args": {
+                                    "map": {
+                                        "isContext": false,
+                                        "value": {
+                                            "1": 4,
+                                            "2": 3,
+                                            "3": 2,
+                                            "4": 1
+                                        }
+                                    }
+                                },
+                                "operator": "MapValues"
+                            }
+                        ]
+                    },
+                    "simple": ""
+                },
+                "occurred": {
+                    "complex": {
+                        "filters": [],
+                        "root": "creation_date",
+                        "transformers": [
+                            {
+                                "args": {},
+                                "operator": "TimeStampToDate"
+                            }
+                        ]
+                    },
+                    "simple": ""
+                },
+                "on2itcaseid": {
+                    "complex": null,
+                    "simple": "id"
+                },
+                "on2itcasenumber": {
+                    "complex": null,
+                    "simple": "case_number"
+                },
+                "on2itcasetype": {
+                    "complex": null,
+                    "simple": "case_type"
+                },
+                "on2itcasestate": {
+                    "complex": null,
+                    "simple": "state"
+                },
+                "on2itresolutionstate": {
+                    "complex": null,
+                    "simple": "resolution_state"
+                },
+                "on2itprimarycontact": {
+                    "complex": null,
+                    "simple": "primary_contact_email"
+                },
+                "on2itescalated": {
+                    "complex": null,
+                    "simple": "escalated"
+                },
+                "dbotMirrorId": {
+                    "complex": null,
+                    "simple": "id"
+                }
+            }
+        }
+    },
+    "name": "ON2IT Zero Trust SOC Case-mapper-incoming",
+    "type": "mapping-incoming",
+    "version": -1,
+    "fromVersion": "6.10.0"
+}

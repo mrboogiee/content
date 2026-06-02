@@ -1,0 +1,512 @@
+category: Case Management
+commonfields:
+  id: On2ITZeroTrustSOC
+  version: -1
+name: On2ITZeroTrustSOC
+display: ON2IT Zero Trust SOC
+fromversion: 6.10.0
+description: Integrate Cortex XSIAM/XSOAR with the ON2IT Zero Trust SOC. Search Protect Surfaces by content type (cloud resource IDs, hostnames, IPs, identities), link cases, and mirror case state in both directions.
+configuration:
+- name: url
+  display: Server URL
+  required: true
+  defaultvalue: https://api.on2it.net/v3
+  type: 0
+  additionalinfo: Base URL of the ON2IT API.
+- name: credentials
+  display: API Token
+  displaypassword: API Token
+  required: true
+  type: 9
+  hiddenusername: true
+  additionalinfo: Bearer token issued by ON2IT. Contact servicedesk@on2it.net to obtain one.
+- name: isFetch
+  display: Fetches incidents
+  type: 8
+  required: false
+- name: incidentType
+  display: Incident type
+  type: 13
+  required: false
+- name: case_type_filter
+  display: Case type filter
+  type: 16
+  options:
+  - securityincident
+  - incident
+  - change
+  - standardchange
+  - inforequest
+  - notification
+  required: false
+  additionalinfo: Restrict the fetch to specific ON2IT case types. Leave empty to fetch all.
+- name: state_filter
+  display: State filter
+  type: 16
+  defaultvalue: new,in_progress,awaiting_customer,on_hold,pending_engineering
+  options:
+  - new
+  - in_progress
+  - awaiting_customer
+  - on_hold
+  - pending_engineering
+  - request_close
+  - request_close_by_customer
+  - closed
+  required: false
+  additionalinfo: Restrict the fetch to specific case states. Defaults to all non-terminal states.
+- name: max_fetch
+  display: Maximum incidents per fetch
+  type: 0
+  defaultvalue: "50"
+  required: false
+- name: first_fetch
+  display: First fetch time
+  type: 0
+  defaultvalue: 7 days
+  required: false
+  additionalinfo: 'Examples: "7 days", "12 hours", "2024-01-01T00:00:00Z".'
+- name: mirror_direction
+  display: Incident Mirroring Direction
+  type: 15
+  defaultvalue: None
+  options:
+  - None
+  - Incoming
+  - Outgoing
+  - Incoming And Outgoing
+  required: false
+- name: close_incident
+  display: Close XSIAM incident on ON2IT close
+  type: 8
+  defaultvalue: "false"
+  required: false
+  additionalinfo: When the ON2IT case is closed, also close the mirrored XSIAM incident.
+- name: close_on2it_case
+  display: Close ON2IT case on XSIAM close
+  type: 8
+  defaultvalue: "false"
+  required: false
+  additionalinfo: When the XSIAM incident is closed, request-close on the linked ON2IT case.
+- name: insecure
+  display: Trust any certificate (not secure)
+  type: 8
+  required: false
+- name: proxy
+  display: Use system proxy settings
+  type: 8
+  required: false
+script:
+  type: python
+  subtype: python3
+  dockerimage: demisto/python3:3.11.10.115186
+  isfetch: true
+  ismappable: true
+  isremotesyncin: true
+  isremotesyncout: true
+  runonce: false
+  commands:
+  - name: on2it-protectsurface-list
+    description: List all Protect Surfaces visible to the API token.
+    arguments:
+    - name: limit
+      description: Maximum number of Protect Surfaces to return.
+      defaultValue: "50"
+    outputs:
+    - contextPath: On2IT.ProtectSurface.id
+      description: Protect Surface ID.
+      type: String
+    - contextPath: On2IT.ProtectSurface.name
+      description: Protect Surface name.
+      type: String
+    - contextPath: On2IT.ProtectSurface.description
+      description: Protect Surface description.
+      type: String
+    - contextPath: On2IT.ProtectSurface.in_control_boundary
+      description: Whether the Protect Surface is inside the control boundary.
+      type: Boolean
+    - contextPath: On2IT.ProtectSurface.in_zero_trust_focus
+      description: Whether the Protect Surface is in zero-trust focus.
+      type: Boolean
+  - name: on2it-protectsurface-get
+    description: Get a single Protect Surface by ID.
+    arguments:
+    - name: id
+      description: Protect Surface ID.
+      required: true
+    outputs:
+    - contextPath: On2IT.ProtectSurface.id
+      description: Protect Surface ID.
+      type: String
+    - contextPath: On2IT.ProtectSurface.name
+      description: Protect Surface name.
+      type: String
+  - name: on2it-protectsurface-search
+    description: Find Protect Surfaces that own a specific value (IP, hostname, cloud resource, identity, etc.).
+    arguments:
+    - name: content_type
+      description: Type of value to search for.
+      auto: PREDEFINED
+      required: true
+      predefined:
+      - azure_cloud
+      - aws_cloud
+      - gcp_cloud
+      - container
+      - hostname
+      - user_identity
+      - ipv4
+      - ipv6
+    - name: value
+      description: Value to look up (IP address, hostname, resource ID, identity, etc.).
+      required: true
+    outputs:
+    - contextPath: On2IT.ProtectSurface.id
+      description: Protect Surface ID.
+      type: String
+    - contextPath: On2IT.ProtectSurface.name
+      description: Protect Surface name.
+      type: String
+  - name: on2it-protectsurface-states-list
+    description: List all states (content groupings) belonging to a Protect Surface.
+    arguments:
+    - name: protectsurface_id
+      description: Protect Surface ID.
+      required: true
+    outputs:
+    - contextPath: On2IT.ProtectSurfaceState.id
+      description: State ID.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.protectsurface_id
+      description: Owning Protect Surface ID.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.content_type
+      description: Content type of the state.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.content
+      description: Content values that belong to the state.
+      type: Unknown
+  - name: on2it-case-list
+    description: List ON2IT cases visible to the API token.
+    arguments:
+    - name: limit
+      description: Maximum number of cases to return.
+      defaultValue: "50"
+    outputs:
+    - contextPath: On2IT.Case.id
+      description: Case ID.
+      type: String
+    - contextPath: On2IT.Case.case_number
+      description: Human-readable case number.
+      type: String
+    - contextPath: On2IT.Case.subject
+      description: Case subject.
+      type: String
+    - contextPath: On2IT.Case.case_type
+      description: Case type.
+      type: String
+    - contextPath: On2IT.Case.state
+      description: Case state.
+      type: String
+    - contextPath: On2IT.Case.resolution_state
+      description: Resolution state.
+      type: String
+    - contextPath: On2IT.Case.creation_date
+      description: Unix creation timestamp.
+      type: Number
+    - contextPath: On2IT.Case.last_update
+      description: Unix last-update timestamp.
+      type: Number
+    - contextPath: On2IT.Case.primary_contact_email
+      description: Primary contact email.
+      type: String
+  - name: on2it-case-get
+    description: Get a single ON2IT case by ID, including the full notes history.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    outputs:
+    - contextPath: On2IT.Case.id
+      description: Case ID.
+      type: String
+    - contextPath: On2IT.Case.case_number
+      description: Human-readable case number.
+      type: String
+    - contextPath: On2IT.Case.subject
+      description: Case subject.
+      type: String
+    - contextPath: On2IT.Case.priority
+      description: Priority (1 = critical, 4 = low).
+      type: Number
+    - contextPath: On2IT.Case.escalated
+      description: Whether the case is currently escalated.
+      type: Boolean
+    - contextPath: On2IT.Case.history_of_notes
+      description: List of historical notes on the case.
+      type: Unknown
+  - name: on2it-case-create
+    description: Create a new ON2IT case.
+    arguments:
+    - name: id
+      description: Optional client-supplied case ID. A random hex ID is generated if omitted.
+    - name: subject
+      description: Case subject.
+      required: true
+    - name: note
+      description: Initial note (case body).
+      required: true
+    - name: case_type
+      description: ON2IT case type.
+      auto: PREDEFINED
+      defaultValue: securityincident
+      predefined:
+      - securityincident
+      - incident
+      - change
+      - standardchange
+      - inforequest
+      - notification
+    - name: priority
+      description: Priority (1 = critical, 4 = low).
+      defaultValue: "3"
+    - name: primary_contact_email
+      description: Primary contact email for the case.
+      required: true
+    - name: entry_id
+      description: Optional war room entry ID of a file to attach to the new case.
+    outputs:
+    - contextPath: On2IT.Case.id
+      description: Newly created case ID.
+      type: String
+  - name: on2it-case-link
+    description: Link the current XSIAM incident to an ON2IT case. Records linkage in context and posts a cross-reference note on the ON2IT case (unless silent=true).
+    arguments:
+    - name: on2it_case_id
+      description: ON2IT case ID to link.
+      required: true
+    - name: xsiam_incident_id
+      description: XSIAM incident ID to link. Defaults to the current incident's ID when omitted.
+    - name: silent
+      description: When true, skip posting a cross-reference note on the ON2IT case.
+      auto: PREDEFINED
+      defaultValue: "false"
+      predefined:
+      - "true"
+      - "false"
+    outputs:
+    - contextPath: On2IT.LinkedCase.on2it_case_id
+      description: Linked ON2IT case ID.
+      type: String
+    - contextPath: On2IT.LinkedCase.xsiam_incident_id
+      description: Linked XSIAM incident ID.
+      type: String
+    - contextPath: On2IT.LinkedCase.linked_at
+      description: ISO8601 timestamp of when the link was recorded.
+      type: String
+  - name: on2it-case-add-note
+    description: Add a note to an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    - name: note
+      description: Note content.
+      required: true
+  - name: on2it-case-update-priority
+    description: Update the priority of an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    - name: priority
+      description: Priority (1 = critical, 4 = low).
+      required: true
+  - name: on2it-case-update-subject
+    description: Update the subject of an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    - name: subject
+      description: New subject.
+      required: true
+  - name: on2it-case-update-primary-contact
+    description: Update the primary contact email of an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    - name: primary_contact_email
+      description: New primary contact email.
+      required: true
+  - name: on2it-case-escalate
+    description: Mark an ON2IT case as escalated.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+  - name: on2it-case-deescalate
+    description: Remove the escalation flag from an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+  - name: on2it-case-close
+    description: Request-close on an ON2IT case.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+  - name: on2it-case-attach-file
+    description: Attach a war room file to an ON2IT case as a base64 data URI.
+    arguments:
+    - name: id
+      description: Case ID.
+      required: true
+    - name: entry_id
+      description: War room entry ID of the file to attach.
+      required: true
+  - name: on2it-asset-list
+    description: List ON2IT assets, optionally filtered by ID, name, or asset type.
+    arguments:
+    - name: id
+      description: Specific asset ID to fetch.
+    - name: name
+      description: Asset name to filter by.
+    - name: asset_type_name
+      description: Comma-separated list of asset type names to filter by.
+      isArray: true
+    - name: page_size
+      description: Page size.
+      defaultValue: "50"
+    - name: page_number
+      description: Page number.
+      defaultValue: "1"
+    outputs:
+    - contextPath: On2IT.Asset.id
+      description: Asset ID.
+      type: String
+    - contextPath: On2IT.Asset.name
+      description: Asset name.
+      type: String
+  - name: on2it-people-search
+    description: Look up an ON2IT person record by exact email match.
+    arguments:
+    - name: email
+      description: Email address to look up.
+      required: true
+    outputs:
+    - contextPath: On2IT.Person.email
+      description: Person email.
+      type: String
+    - contextPath: On2IT.Person.id
+      description: Person ID.
+      type: String
+  - name: on2it-state-create
+    description: Create or replace a Protect Surface state (content grouping).
+    arguments:
+    - name: id
+      description: Unique identifier for the state. If it exists, it will be replaced.
+      required: true
+    - name: protectsurface_id
+      description: ID of the Protect Surface this state belongs to.
+      required: true
+    - name: content_type
+      description: Type of content in this state (e.g., ipv4, hostname, azure_cloud, aws_cloud, gcp_cloud, container, user_identity).
+      required: true
+    - name: content
+      description: List of content values (comma-separated or array).
+      required: true
+      isArray: true
+    - name: description
+      description: Human-readable description of the state.
+    - name: maintainer
+      description: Email or identifier of the person/system maintaining this state.
+    outputs:
+    - contextPath: On2IT.ProtectSurfaceState.id
+      description: State ID.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.protectsurface_id
+      description: Protect Surface ID.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.content_type
+      description: Content type.
+      type: String
+    - contextPath: On2IT.ProtectSurfaceState.content
+      description: Content values.
+      type: Unknown
+  - name: on2it-state-delete
+    description: Remove a Protect Surface state by ID.
+    arguments:
+    - name: id
+      description: Unique identifier of the state to delete.
+      required: true
+  - name: on2it-assessment-questions-get
+    description: Get all base questions and answers for Zero Trust Readiness Assessments.
+    outputs:
+    - contextPath: On2IT.AssessmentQuestions
+      description: Base questions and answer options for assessments.
+      type: Unknown
+  - name: on2it-assessment-create
+    description: Create a new Zero Trust Readiness Assessment.
+    arguments:
+    - name: timestamp
+      description: Unix timestamp for the assessment. Defaults to current time if not provided.
+    - name: answers
+      description: JSON object containing the assessment answers.
+    outputs:
+    - contextPath: On2IT.Assessment.id
+      description: Assessment ID.
+      type: String
+    - contextPath: On2IT.Assessment.assessment_timestamp
+      description: Timestamp of the assessment.
+      type: Number
+  - name: on2it-assessment-get
+    description: Get a specific Zero Trust Readiness Assessment by ID.
+    arguments:
+    - name: id
+      description: Unique identifier of the assessment.
+      required: true
+    outputs:
+    - contextPath: On2IT.Assessment.id
+      description: Assessment ID.
+      type: String
+    - contextPath: On2IT.Assessment.assessment_timestamp
+      description: Timestamp of the assessment.
+      type: Number
+  - name: on2it-assessment-list
+    description: List all Zero Trust Readiness Assessments with pagination.
+    arguments:
+    - name: page_number
+      description: Page number to retrieve (default 1).
+    - name: page_size
+      description: Number of results per page (default 100).
+    - name: sort
+      description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
+    outputs:
+    - contextPath: On2IT.Assessment.id
+      description: Assessment ID.
+      type: String
+    - contextPath: On2IT.Assessment.assessment_timestamp
+      description: Timestamp of the assessment.
+      type: Number
+  - name: on2it-assessment-summary-get
+    description: Get a summary of Zero Trust Readiness Assessments with pagination.
+    arguments:
+    - name: page_number
+      description: Page number to retrieve (default 1).
+    - name: page_size
+      description: Number of results per page (default 100).
+    - name: sort
+      description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
+    outputs:
+    - contextPath: On2IT.AssessmentSummary
+      description: Summary data for assessments.
+      type: Unknown
+  - name: on2it-assessment-delete
+    description: Remove a Zero Trust Readiness Assessment by ID.
+    arguments:
+    - name: id
+      description: Unique identifier of the assessment to delete.
+      required: true

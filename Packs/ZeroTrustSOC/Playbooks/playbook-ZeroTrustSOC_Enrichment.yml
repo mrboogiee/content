@@ -1,0 +1,187 @@
+id: ON2IT Zero Trust SOC - Protect Surface Enrichment
+version: -1
+name: ON2IT Zero Trust SOC - Protect Surface Enrichment
+description: For each indicator in the incident (IP addresses and hostnames), queries the ON2IT API for matching Protect Surfaces and stores the results in the on2itprotectsurfaces incident field.
+fromversion: 6.10.0
+starttaskid: "0"
+tasks:
+  "0":
+    id: "0"
+    taskid: 6b63eb6e-bb26-40fc-890c-d35fb49d2fd5
+    type: start
+    task:
+      id: 6b63eb6e-bb26-40fc-890c-d35fb49d2fd5
+      version: -1
+      name: ""
+      iscommand: false
+      brand: ""
+      description: ''
+    nexttasks:
+      '#none#':
+      - "1"
+      - "2"
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 60
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "1":
+    id: "1"
+    taskid: 0e7c6d51-c10d-42df-99c9-5b7d929c38ba
+    type: regular
+    task:
+      id: 0e7c6d51-c10d-42df-99c9-5b7d929c38ba
+      version: -1
+      name: Search Protect Surfaces by IP
+      description: Search ON2IT Protect Surfaces by IP address.
+      script: On2ITZeroTrustSOC|||on2it-protectsurface-search
+      type: regular
+      iscommand: true
+      brand: On2ITZeroTrustSOC
+    nexttasks:
+      '#none#':
+      - "3"
+    scriptarguments:
+      content_type:
+        simple: ipv4
+      value:
+        complex:
+          root: inputs.IPAddresses
+    separatecontext: false
+    loop:
+      forEach: inputs.IPAddresses
+    view: |-
+      {
+        "position": {
+          "x": 250,
+          "y": 220
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "2":
+    id: "2"
+    taskid: 8ad05390-3578-4f51-82f8-e52342d3d849
+    type: regular
+    task:
+      id: 8ad05390-3578-4f51-82f8-e52342d3d849
+      version: -1
+      name: Search Protect Surfaces by Hostname
+      description: Search ON2IT Protect Surfaces by hostname.
+      script: On2ITZeroTrustSOC|||on2it-protectsurface-search
+      type: regular
+      iscommand: true
+      brand: On2ITZeroTrustSOC
+    nexttasks:
+      '#none#':
+      - "3"
+    scriptarguments:
+      content_type:
+        simple: hostname
+      value:
+        complex:
+          root: inputs.Hostnames
+    separatecontext: false
+    loop:
+      forEach: inputs.Hostnames
+    view: |-
+      {
+        "position": {
+          "x": 650,
+          "y": 220
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "3":
+    id: "3"
+    taskid: c6d33486-c01b-4642-b98d-29c175b0ac83
+    type: regular
+    task:
+      id: c6d33486-c01b-4642-b98d-29c175b0ac83
+      version: -1
+      name: Set field
+      description: Store matching Protect Surfaces on the incident.
+      script: Builtin|||setIncident
+      type: regular
+      iscommand: true
+      brand: Builtin
+    nexttasks:
+      '#none#':
+      - "4"
+    scriptarguments:
+      on2itprotectsurfaces:
+        complex:
+          root: On2IT
+          accessor: ProtectSurface
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 420
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "4":
+    id: "4"
+    taskid: 3fc7446d-bf9a-4242-bcde-2c1e9746cefe
+    type: title
+    task:
+      id: 3fc7446d-bf9a-4242-bcde-2c1e9746cefe
+      version: -1
+      name: Done
+      type: title
+      iscommand: false
+      brand: ""
+      description: ''
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 580
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+inputs:
+- key: IPAddresses
+  value:
+    complex:
+      root: incident
+      accessor: ipaddresses
+  required: false
+  description: Optional list of incident IP addresses.
+- key: Hostnames
+  value:
+    complex:
+      root: incident
+      accessor: hostnames
+  required: false
+  description: Optional list of incident hostnames.
+outputs:
+- contextPath: On2IT.ProtectSurface
+  description: List of matched Protect Surface objects.
+  type: Unknown

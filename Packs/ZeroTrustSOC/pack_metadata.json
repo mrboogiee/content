@@ -1,0 +1,33 @@
+{
+    "name": "ON2IT Zero Trust SOC",
+    "description": "Integrate Cortex XSIAM with the ON2IT Zero Trust SOC: link cases, mirror state, and look up Protect Surfaces by their content type (cloud resource IDs, hostnames, IPs, identities).",
+    "support": "partner",
+    "currentVersion": "1.0.0",
+    "author": "ON2IT",
+    "url": "https://on2it.net",
+    "email": "servicedesk@on2it.net",
+    "categories": [
+        "Case Management"
+    ],
+    "tags": [],
+    "useCases": [
+        "Case Management"
+    ],
+    "keywords": [
+        "ON2IT",
+        "Zero Trust",
+        "Protect Surface",
+        "SOC",
+        "Mirroring"
+    ],
+    "marketplaces": [
+        "marketplacev2"
+    ],
+    "firstCreated": "2026-06-02T13:17:11Z",
+    "devEmail": [
+        "updatesToMyPack@on2it.net"
+    ],
+    "githubUser": [
+        "mrboogiee"
+    ]
+}

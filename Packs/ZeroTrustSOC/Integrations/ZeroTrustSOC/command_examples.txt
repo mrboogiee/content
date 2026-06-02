@@ -1,0 +1,18 @@
+!on2it-protectsurface-list limit=5
+!on2it-protectsurface-search content_type=ipv4 value=10.0.0.5
+!on2it-protectsurface-search content_type=hostname value=web01.example.com
+!on2it-case-list limit=5
+!on2it-case-get id=1234567890abcdef
+!on2it-case-create subject="New IDS alert from XSIAM" note="Auto-created by SOAR playbook" priority=2 case_type=securityincident primary_contact_email=soc@example.com
+!on2it-case-link on2it_case_id=2288f072a2e460d9b21eefd1811518c5
+!on2it-case-add-note id=2288f072a2e460d9b21eefd1811518c5 note="Updated by playbook step #3"
+!on2it-asset-list page_size=10
+!on2it-people-search email=servicedesk@example.com
+!on2it-state-create id=prod_web_servers protectsurface_id=ps_123456 content_type=ipv4 content="10.0.1.10,10.0.1.11,10.0.1.12" description="Production web servers" maintainer=devops@example.com
+!on2it-state-delete id=old_state_id
+!on2it-assessment-questions-get
+!on2it-assessment-create answers='{"question1": "answer1", "question2": "answer2"}'
+!on2it-assessment-get id=assessment_123
+!on2it-assessment-list page_size=20 sort=-assessment_timestamp
+!on2it-assessment-summary-get page_size=10
+!on2it-assessment-delete id=assessment_123

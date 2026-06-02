@@ -1,0 +1,23 @@
+{
+    "description": "Classifies ON2IT cases.",
+    "feed": false,
+    "id": "ON2IT Zero Trust SOC Case",
+    "defaultIncidentType": "ON2IT Zero Trust SOC Case",
+    "keyTypeMap": {
+        "securityincident": "ON2IT Zero Trust SOC Case",
+        "incident": "ON2IT Zero Trust SOC Case",
+        "change": "ON2IT Zero Trust SOC Case",
+        "standardchange": "ON2IT Zero Trust SOC Case",
+        "inforequest": "ON2IT Zero Trust SOC Case",
+        "notification": "ON2IT Zero Trust SOC Case"
+    },
+    "mapping": {
+        "incomingMapperId": "ON2IT Zero Trust SOC Case-mapper-incoming",
+        "outgoingMapperId": "ON2IT Zero Trust SOC Case-mapper-outgoing"
+    },
+    "name": "ON2IT Zero Trust SOC Case Classifier",
+    "transformer": {},
+    "type": "classification",
+    "version": -1,
+    "fromVersion": "6.10.0"
+}

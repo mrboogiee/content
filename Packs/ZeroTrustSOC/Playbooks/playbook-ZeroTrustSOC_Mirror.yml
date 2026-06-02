@@ -1,0 +1,140 @@
+id: ON2IT Zero Trust SOC - Mirror Setup
+version: -1
+name: ON2IT Zero Trust SOC - Mirror Setup
+description: Ensures the fetched ON2IT case is linked for bi-directional mirroring. Reads On2IT Case ID from incident fields and calls !on2it-case-link to record the cross-reference note on the ON2IT side.
+fromversion: 6.10.0
+starttaskid: "0"
+trigger:
+  type: "ON2IT Zero Trust SOC Case"
+tasks:
+  "0":
+    id: "0"
+    taskid: 38d4ee08-c63a-4ef2-8e93-ae5222e9d101
+    type: start
+    task:
+      id: 38d4ee08-c63a-4ef2-8e93-ae5222e9d101
+      version: -1
+      name: ""
+      iscommand: false
+      brand: ""
+      description: ''
+    nexttasks:
+      '#none#':
+      - "1"
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 60
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "1":
+    id: "1"
+    taskid: 7a113345-97db-4dbe-8798-d11cf47b3b31
+    type: condition
+    task:
+      id: 7a113345-97db-4dbe-8798-d11cf47b3b31
+      version: -1
+      name: Check if case ID is set
+      type: condition
+      iscommand: false
+      brand: ""
+    nexttasks:
+      '#default#':
+      - "3"
+      yes:
+      - "2"
+    separatecontext: false
+    conditions:
+    - label: yes
+      condition:
+      - - operator: isNotEmpty
+          left:
+            value:
+              complex:
+                root: incident
+                accessor: on2itcaseid
+            iscontext: true
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 220
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "2":
+    id: "2"
+    taskid: f8510c8a-c27c-4f12-8903-3d13be6db7f0
+    type: regular
+    task:
+      id: f8510c8a-c27c-4f12-8903-3d13be6db7f0
+      version: -1
+      name: Link case
+      description: Record the XSIAM incident reference on the ON2IT case.
+      script: On2ITZeroTrustSOC|||on2it-case-link
+      type: regular
+      iscommand: true
+      brand: On2ITZeroTrustSOC
+    nexttasks:
+      '#none#':
+      - "3"
+    scriptarguments:
+      on2it_case_id:
+        complex:
+          root: incident
+          accessor: on2itcaseid
+      xsiam_incident_id:
+        complex:
+          root: incident
+          accessor: id
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 390
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+  "3":
+    id: "3"
+    taskid: 399c7f6b-0ab9-4a96-8668-a6ddc4a0f915
+    type: title
+    task:
+      id: 399c7f6b-0ab9-4a96-8668-a6ddc4a0f915
+      version: -1
+      name: Done
+      type: title
+      iscommand: false
+      brand: ""
+      description: ''
+    separatecontext: false
+    view: |-
+      {
+        "position": {
+          "x": 450,
+          "y": 560
+        }
+      }
+    note: false
+    timertriggers: []
+    ignoreworker: false
+    skipunavailable: false
+    quietmode: 0
+inputs: []
+outputs: []

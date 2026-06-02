@@ -1,0 +1,37 @@
+{
+    "items": [
+        {
+            "id": "case-aaa",
+            "case_number": "C-1001",
+            "case_type": "securityincident",
+            "subject": "Suspicious login from new geo",
+            "state": "in_progress",
+            "resolution_state": "pending",
+            "primary_contact_email": "soc@example.com",
+            "creation_date": 1714400000,
+            "last_update": 1714500000
+        },
+        {
+            "id": "case-bbb",
+            "case_number": "C-1002",
+            "case_type": "change",
+            "subject": "Quarterly firewall review",
+            "state": "new",
+            "resolution_state": "pending",
+            "primary_contact_email": "ops@example.com",
+            "creation_date": 1714600000,
+            "last_update": 1714700000
+        },
+        {
+            "id": "case-ccc",
+            "case_number": "C-1003",
+            "case_type": "securityincident",
+            "subject": "Phish reported by user",
+            "state": "closed",
+            "resolution_state": "final",
+            "primary_contact_email": "soc@example.com",
+            "creation_date": 1714100000,
+            "last_update": 1714200000
+        }
+    ]
+}
