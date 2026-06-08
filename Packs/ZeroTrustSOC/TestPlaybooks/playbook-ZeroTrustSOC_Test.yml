@@ -1,6 +1,6 @@
-id: ZeroTrustSOC - Test
+id: Zero Trust SOC - Test
 version: -1
-name: ZeroTrustSOC - Test
+name: Zero Trust SOC - Test
 description: Integration smoke test — verifies the API token is valid and core commands return data.
 fromversion: 6.10.0
 starttaskid: "0"

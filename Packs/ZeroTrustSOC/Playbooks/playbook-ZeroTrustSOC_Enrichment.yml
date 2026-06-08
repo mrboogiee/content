@@ -1,7 +1,7 @@
 id: ZeroTrustSOC - Protect Surface Enrichment
 version: -1
 name: ZeroTrustSOC - Protect Surface Enrichment
-description: For each indicator in the incident (IP addresses and hostnames), queries the ZeroTrustSOC API for matching Protect Surfaces and stores the results in the on2itprotectsurfaces incident field.
+description: For each indicator in the incident (IP addresses and hostnames), queries the Zero Trust SOC API for matching Protect Surfaces and stores the results in the on2itprotectsurfaces incident field.
 fromversion: 6.10.0
 starttaskid: "0"
 tasks:
@@ -41,7 +41,7 @@ tasks:
       id: 0e7c6d51-c10d-42df-99c9-5b7d929c38ba
       version: -1
       name: Search Protect Surfaces by IP
-      description: Search ON2IT Protect Surfaces by IP address.
+      description: Search Zero Trust SOC Protect Surfaces by IP address.
       script: ZeroTrustSOC|||on2it-protectsurface-search
       type: regular
       iscommand: true
@@ -57,7 +57,11 @@ tasks:
           root: inputs.IPAddresses
     separatecontext: false
     loop:
-      forEach: inputs.IPAddresses
+      iscommand: false
+      exitCondition: ""
+      wait: 5
+      max: 0
+      forEach: true
     view: |-
       {
         "position": {
@@ -78,7 +82,7 @@ tasks:
       id: 8ad05390-3578-4f51-82f8-e52342d3d849
       version: -1
       name: Search Protect Surfaces by Hostname
-      description: Search ON2IT Protect Surfaces by hostname.
+      description: Search Zero Trust SOC Protect Surfaces by hostname.
       script: ZeroTrustSOC|||on2it-protectsurface-search
       type: regular
       iscommand: true
@@ -94,7 +98,11 @@ tasks:
           root: inputs.Hostnames
     separatecontext: false
     loop:
-      forEach: inputs.Hostnames
+      iscommand: false
+      exitCondition: ""
+      wait: 5
+      max: 0
+      forEach: true
     view: |-
       {
         "position": {

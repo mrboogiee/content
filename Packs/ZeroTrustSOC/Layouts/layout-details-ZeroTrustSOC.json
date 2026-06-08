@@ -1,9 +1,9 @@
 {
-    "id": "ZeroTrustSOC Case",
-    "name": "ZeroTrustSOC Case Layout",
+    "id": "Zero Trust SOC Case",
+    "name": "Zero Trust SOC Case Layout",
     "fromVersion": "6.10.0",
     "version": -1,
-    "typeId": "ZeroTrustSOC Case",
+    "typeId": "Zero Trust SOC Case",
     "kind": "details",
     "detailsV2": {
         "tabs": [

@@ -1,21 +1,17 @@
 {
-    "description": "Classifies ZeroTrustSOC cases.",
+    "description": "Classifies Zero Trust SOC cases.",
     "feed": false,
-    "id": "ZeroTrustSOC Case",
-    "defaultIncidentType": "ZeroTrustSOC Case",
+    "id": "Zero Trust SOC Case Classifier",
+    "defaultIncidentType": "Zero Trust SOC Case",
     "keyTypeMap": {
-        "securityincident": "ZeroTrustSOC Case",
-        "incident": "ZeroTrustSOC Case",
-        "change": "ZeroTrustSOC Case",
-        "standardchange": "ZeroTrustSOC Case",
-        "inforequest": "ZeroTrustSOC Case",
-        "notification": "ZeroTrustSOC Case"
+        "securityincident": "Zero Trust SOC Case",
+        "incident": "Zero Trust SOC Case",
+        "change": "Zero Trust SOC Case",
+        "standardchange": "Zero Trust SOC Case",
+        "inforequest": "Zero Trust SOC Case",
+        "notification": "Zero Trust SOC Case"
     },
-    "mapping": {
-        "incomingMapperId": "ZeroTrustSOC Case-mapper-incoming",
-        "outgoingMapperId": "ZeroTrustSOC Case-mapper-outgoing"
-    },
-    "name": "ZeroTrustSOC Case Classifier",
+    "name": "Zero Trust SOC Case Classifier",
     "transformer": {},
     "type": "classification",
     "version": -1,

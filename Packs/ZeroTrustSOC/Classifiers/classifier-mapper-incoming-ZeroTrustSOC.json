@@ -1,10 +1,10 @@
 {
-    "defaultIncidentType": "ZeroTrustSOC Case",
-    "description": "Maps incoming ZeroTrustSOC cases to XSIAM incident fields.",
+    "defaultIncidentType": "Zero Trust SOC Case",
+    "description": "Maps incoming Zero Trust SOC cases to XSIAM incident fields.",
     "feed": false,
-    "id": "ZeroTrustSOC Case-mapper-incoming",
+    "id": "Zero Trust SOC Case-mapper-incoming",
     "mapping": {
-        "ZeroTrustSOC Case": {
+        "Zero Trust SOC Case": {
             "dontMapEventToLabels": false,
             "internalMapping": {
                 "name": {
@@ -17,11 +17,12 @@
                                 "args": {
                                     "prefix": {
                                         "isContext": false,
-                                        "value": "ON2IT [${case_number}] "
+                                        "value": {
+                                            "simple": "ON2IT [${case_number}] "
+                                        }
                                     },
                                     "suffix": {
-                                        "isContext": false,
-                                        "value": ""
+                                        "isContext": false
                                     }
                                 },
                                 "operator": "concat"
@@ -101,7 +102,7 @@
             }
         }
     },
-    "name": "ZeroTrustSOC Case-mapper-incoming",
+    "name": "Zero Trust SOC Case-mapper-incoming",
     "type": "mapping-incoming",
     "version": -1,
     "fromVersion": "6.10.0"

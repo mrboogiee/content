@@ -1,4 +1,4 @@
-"""ZeroTrustSOC integration for Cortex XSIAM/XSOAR.
+"""Zero Trust SOC integration for Cortex XSIAM/XSOAR.
 
 The ON2IT public API (``https://api.on2it.net/v3``) wraps almost every list,
 POST and PATCH payload in an ``{"items": [...]}`` envelope. This module hides
@@ -394,7 +394,7 @@ def protectsurface_search_command(client: Client, args: dict[str, Any]) -> Comma
         outputs_key_field="id",
         outputs=surfaces,
         readable_output=tableToMarkdown(
-            f"ON2IT Protect Surfaces matching `{content_type}={value}` ({len(surfaces)})",
+            f"Zero Trust SOC Protect Surfaces matching `{content_type}={value}` ({len(surfaces)})",
             rows,
             headers=["id", "name", "description", "in_control_boundary", "in_zero_trust_focus"],
         ),
@@ -904,7 +904,7 @@ def get_remote_data_command(client: Client, args: dict[str, Any], close_incident
                 "Type": EntryType.NOTE,
                 "Contents": {
                     "dbotIncidentClose": True,
-                    "closeReason": "Closed from ZeroTrustSOC.",
+                    "closeReason": "Closed from Zero Trust SOC.",
                 },
                 "ContentsFormat": EntryFormat.JSON,
             }
@@ -1007,7 +1007,7 @@ def main() -> None:
     params = demisto.params()
     args = demisto.args()
     command = demisto.command()
-    demisto.debug(f"ZeroTrustSOC: command={command}")
+    demisto.debug(f"Zero Trust SOC: command={command}")
 
     try:
         client = _build_client(params)

@@ -1,11 +1,11 @@
 {
-    "id": "ZeroTrustSOC Case",
+    "id": "Zero Trust SOC Case",
     "version": -1,
     "fromVersion": "6.10.0",
     "vcShouldIgnore": false,
     "locked": false,
-    "name": "ZeroTrustSOC Case",
-    "prevName": "ZeroTrustSOC Case",
+    "name": "Zero Trust SOC Case",
+    "prevName": "Zero Trust SOC Case",
     "color": "#00a1c2",
     "hours": 0,
     "days": 3,
@@ -22,5 +22,5 @@
     "autoSentRepInvestigationEnabled": false,
     "preProcessingScript": "",
     "closureScript": "",
-    "layout": "ZeroTrustSOC Case"
+    "layout": "Zero Trust SOC Case"
 }

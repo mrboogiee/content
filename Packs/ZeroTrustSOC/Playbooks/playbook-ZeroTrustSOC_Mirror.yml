@@ -1,7 +1,7 @@
 id: ZeroTrustSOC - Mirror Setup
 version: -1
 name: ZeroTrustSOC - Mirror Setup
-description: Ensures the fetched ZeroTrustSOC case is linked for bi-directional mirroring. Reads On2IT Case ID from incident fields and calls !on2it-case-link to record the cross-reference note on the ZeroTrustSOC side.
+description: Ensures the fetched Zero Trust SOC case is linked for bi-directional mirroring. Reads the case ID from incident fields and calls !on2it-case-link to record the cross-reference note on the Zero Trust SOC side.
 fromversion: 6.10.0
 starttaskid: "0"
 trigger:

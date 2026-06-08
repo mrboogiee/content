@@ -1,8 +1,8 @@
 {
-    "defaultIncidentType": "ZeroTrustSOC Case",
-    "description": "Maps XSIAM incident fields to ZeroTrustSOC case fields.",
+    "defaultIncidentType": "Zero Trust SOC Case",
+    "description": "Maps XSIAM incident fields to Zero Trust SOC case fields.",
     "feed": false,
-    "id": "ZeroTrustSOC Case-mapper-outgoing",
+    "id": "Zero Trust SOC Case-mapper-outgoing",
     "mapping": {
         "ZeroTrustSOC Case": {
             "dontMapEventToLabels": false,
@@ -57,7 +57,7 @@
             }
         }
     },
-    "name": "ZeroTrustSOC Case-mapper-outgoing",
+    "name": "Zero Trust SOC Case-mapper-outgoing",
     "type": "mapping-outgoing",
     "version": -1,
     "fromVersion": "6.10.0"

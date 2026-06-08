@@ -1,6 +1,6 @@
-## ZeroTrustSOC
+## Zero Trust SOC
 
-This integration connects Cortex XSIAM (or XSOAR) to the ZeroTrustSOC public API
+This integration connects Cortex XSIAM (or XSOAR) to the Zero Trust SOC public API
 (`https://api.on2it.net/v3/`). It lets analysts look up Protect Surfaces by their content
 type (IP, hostname, identity, container, cloud resource), manage ON2IT cases end-to-end,
 and mirror case state between XSIAM and the ON2IT SOC.
