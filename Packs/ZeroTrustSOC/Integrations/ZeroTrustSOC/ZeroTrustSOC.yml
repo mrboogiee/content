@@ -14,12 +14,26 @@ configuration:
   type: 0
   additionalinfo: Base URL of the ON2IT API.
 - name: credentials
-  display: API Token
-  displaypassword: API Token
+  display: Case Integration API Token
+  displaypassword: Case Integration API Token
   required: true
   type: 9
   hiddenusername: true
-  additionalinfo: Bearer token issued by ON2IT. Contact servicedesk@on2it.net to obtain one.
+  additionalinfo: Case Integration Bearer token issued by ON2IT. Contact servicedesk@on2it.net to obtain one.
+- name: eventflowcredentials
+  display: Events API Token
+  displaypassword: Events API Token
+  required: true
+  type: 9
+  hiddenusername: true
+  additionalinfo: Events API Bearer token issued by ON2IT. Contact servicedesk@on2it.net to obtain one.
+- name: protectsurfacecredentials
+  display: Protect Surface API Token
+  displaypassword: Protect Surface API Token
+  required: true
+  type: 9
+  hiddenusername: true
+  additionalinfo: Protect Surface API Bearer token issued by ON2IT. Contact servicedesk@on2it.net to obtain one.
 - name: isFetch
   display: Fetches incidents
   type: 8

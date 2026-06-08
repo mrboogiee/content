@@ -10,6 +10,7 @@ import base64
 import json
 import mimetypes
 import secrets
+import time
 from datetime import datetime, UTC
 from typing import Any
 
@@ -237,6 +238,22 @@ class Client(BaseClient):
             ok_codes=(200, 201, 204),
             return_empty_response=True,
         )
+
+    # -- Other -------------------------------------------------------------- #
+
+    # -- EventFlow ------------------------------------------------------------- #
+
+    def post_event(self, event_b64: str) -> None:
+        """POST a base64-encoded event (or newline-separated batch) to the eventflow store-events endpoint."""
+        self._http_request(
+            "POST",
+            "/eventflow/store-events",
+            data=event_b64,
+            headers={"Content-Type": "text/plain"},
+            ok_codes=(200, 201, 204),
+            return_empty_response=True,
+        )
+
 
     # -- Other -------------------------------------------------------------- #
 
@@ -635,29 +652,72 @@ def case_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
         ),
     )
 
+_EVENTFLOW_POLL_INTERVAL = 10   # seconds between list_cases polls
+_EVENTFLOW_MAX_ATTEMPTS  = 12   # 12 × 10 s = 120 s max wait
 
-def case_create_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    case_id = args.get("id") or secrets.token_hex(16)  # 32-char hex; ON2IT case `id` accepts any opaque string up to 255 chars.
-    case_type = args.get("case_type") or "securityincident"
-    if case_type not in CASE_TYPES:
-        raise DemistoException(f"case_type must be one of: {', '.join(CASE_TYPES)}")
-    payload: dict[str, Any] = {
-        "id": case_id,
-        "subject": args["subject"],
-        "note": args["note"],
-        "case_type": case_type,
-        "priority": _coerce_priority(args.get("priority"), default=3),
-        "primary_contact_email": args["primary_contact_email"],
+
+def case_create_command(client: Client, eventflow_client: Client, args: dict[str, Any]) -> CommandResults:
+    vendor_event_id = secrets.token_hex(16)
+
+    # Build an "other" event payload matching the go-auxo Other struct.
+    event: dict[str, Any] = {
+        "type": "other",
+        "detection_timestamp": int(datetime.now(UTC).timestamp()),
+        "message": args["subject"],
+        "vendor": args.get("vendor", "Cortex XSIAM"),
+        "vendor_event_id": vendor_event_id,
+        "raw": {
+            "note": args.get("note", ""),
+            "case_type": args.get("case_type", "securityincident"),
+            "priority": _coerce_priority(args.get("priority"), default=3),
+            "primary_contact_email": args.get("primary_contact_email", ""),
+        },
     }
-    entry_id = args.get("entry_id")
-    if entry_id:
-        payload["attachment"] = _file_to_data_uri(entry_id)
-    client.create_case(payload)
+
+    # Marshal → base64, matching PostEventQueue behaviour in go-auxo.
+    event_b64 = base64.b64encode(json.dumps(event).encode()).decode("ascii")
+
+    # Snapshot existing case IDs so we can detect the newly created one.
+    existing_ids: set[str] = {str(c.get("id")) for c in client.list_cases()}
+
+    # Post to eventflow — this triggers ON2IT to open a case asynchronously.
+    eventflow_client.post_event(event_b64)
+
+    subject = args["subject"]
+
+    # Poll until the new case surfaces in the case list.
+    new_case: dict[str, Any] | None = None
+    for _ in range(_EVENTFLOW_MAX_ATTEMPTS):
+        time.sleep(_EVENTFLOW_POLL_INTERVAL)
+        cases = client.list_cases()
+        fresh = [
+            c for c in cases
+            if str(c.get("id")) not in existing_ids and c.get("subject") == subject
+        ]
+        if fresh:
+            new_case = max(fresh, key=lambda c: c.get("last_update") or 0)
+            break
+
+    if new_case is None:
+        raise DemistoException(
+            f"Event posted (vendor_event_id={vendor_event_id}) but no new case appeared within "
+            f"{_EVENTFLOW_MAX_ATTEMPTS * _EVENTFLOW_POLL_INTERVAL} seconds."
+        )
+
+    # Fetch full case detail to get all fields including the ON2IT case ID.
+    case_id = str(new_case.get("id") or "")
+    case = client.get_case(case_id) or new_case
+
+    row = _human_case_row(case) | {"priority": case.get("priority"), "escalated": case.get("escalated")}
     return CommandResults(
         outputs_prefix="On2IT.Case",
         outputs_key_field="id",
-        outputs={"id": case_id, "subject": payload["subject"], "case_type": case_type, "priority": payload["priority"]},
-        readable_output=f"Created ON2IT case `{case_id}`.",
+        outputs=case,
+        readable_output=tableToMarkdown(
+            f"Created ON2IT Case `{case_id}`",
+            row,
+            headers=["id", "case_number", "subject", "case_type", "state", "priority", "primary_contact_email"],
+        ),
     )
 
 
@@ -977,7 +1037,6 @@ COMMAND_HANDLERS = {
     "on2it-assessment-delete": assessment_delete_command,
     "on2it-case-list": case_list_command,
     "on2it-case-get": case_get_command,
-    "on2it-case-create": case_create_command,
     "on2it-case-link": case_link_command,
     "on2it-case-add-note": case_add_note_command,
     "on2it-case-update-priority": case_update_priority_command,
@@ -991,10 +1050,18 @@ COMMAND_HANDLERS = {
     "on2it-people-search": people_search_command,
 }
 
+_PROTECTSURFACE_COMMANDS = frozenset({
+    "on2it-protectsurface-list",
+    "on2it-protectsurface-get",
+    "on2it-protectsurface-search",
+    "on2it-protectsurface-states-list",
+    "on2it-state-create",
+    "on2it-state-delete",
+})
 
-def _build_client(params: dict[str, Any]) -> Client:
+def _build_client(params: dict[str, Any], creds_key: str = "credentials") -> Client:
     base_url = params.get("url") or "https://api.on2it.net/v3"
-    creds = params.get("credentials") or {}
+    creds = params.get(creds_key) or params.get("credentials") or {}
     token = creds.get("password") or ""
     if not token:
         raise DemistoException("API token is required. Configure it in the integration's API Token credentials field.")
@@ -1011,6 +1078,8 @@ def main() -> None:
 
     try:
         client = _build_client(params)
+        ps_client = _build_client(params, creds_key="protectsurfacecredentials")
+        eventflow_client = _build_client(params, creds_key="eventflowcredentials")
 
         if command == "test-module":
             return_results(test_module(client))
@@ -1040,10 +1109,15 @@ def main() -> None:
             return_results(get_mapping_fields_command())
             return
 
+        if command == "on2it-case-create":
+            return_results(case_create_command(client, eventflow_client, args))
+            return
+        
         handler = COMMAND_HANDLERS.get(command)
         if handler is None:
             raise NotImplementedError(f"Command `{command}` is not implemented.")
-        return_results(handler(client, args))
+        active_client = ps_client if command in _PROTECTSURFACE_COMMANDS else client
+        return_results(handler(active_client, args))
 
     except Exception as exc:  # noqa: BLE001 - top-level boundary, surface to XSIAM
         return_error(f"Failed to execute {command} command. Error: {exc}")
