@@ -87,7 +87,7 @@ class Client(BaseClient):
 
     # -- error handling ----------------------------------------------------- #
 
-    def _handle_error(self, resp: requests.Response) -> None:  # type: ignore[override]
+    def _api_error_handler(self, resp: requests.Response) -> None:
         err_msg = f"Error in API call [{resp.status_code}] - {resp.reason}"
         try:
             body = resp.json()
@@ -106,7 +106,7 @@ class Client(BaseClient):
         raise DemistoException(err_msg)
 
     def _http_request(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
-        kwargs.setdefault("error_handler", self._handle_error)
+        kwargs.setdefault("error_handler", self._api_error_handler)
         return super()._http_request(*args, **kwargs)
 
     # -- envelope helpers --------------------------------------------------- #
