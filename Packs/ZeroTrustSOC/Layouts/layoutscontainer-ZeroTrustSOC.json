@@ -1,10 +1,11 @@
 {
+    "group": "incident",
     "id": "Zero Trust SOC Case",
-    "name": "Zero Trust SOC Case Layout",
-    "fromVersion": "6.10.0",
+    "name": "Zero Trust SOC Case",
+    "system": false,
     "version": -1,
-    "typeId": "Zero Trust SOC Case",
-    "kind": "details",
+    "fromVersion": "6.10.0",
+    "description": "",
     "detailsV2": {
         "tabs": [
             {
