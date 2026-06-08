@@ -14,6 +14,7 @@ import time
 from datetime import datetime, UTC
 from typing import Any
 
+import requests
 import urllib3
 from CommonServerPython import *  # noqa: F401, F403
 from CommonServerUserPython import *  # noqa: F401, F403
@@ -83,6 +84,30 @@ class Client(BaseClient):
             "Accept": "application/json",
         }
         super().__init__(base_url=base_url.rstrip("/"), verify=verify, proxy=proxy, headers=headers)
+
+    # -- error handling ----------------------------------------------------- #
+
+    def _handle_error(self, resp: requests.Response) -> None:  # type: ignore[override]
+        err_msg = f"Error in API call [{resp.status_code}] - {resp.reason}"
+        try:
+            body = resp.json()
+            if detail := body.get("detail") or body.get("message") or body.get("error"):
+                err_msg += f": {detail}"
+        except ValueError:
+            if resp.text:
+                err_msg += f": {resp.text[:500]}"
+        if resp.status_code == 401:
+            err_msg += " — the API token is missing or invalid."
+        elif resp.status_code == 403:
+            err_msg += (
+                " — the API token does not have permission for this resource."
+                " Verify the token is correct and has the required scopes."
+            )
+        raise DemistoException(err_msg)
+
+    def _http_request(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+        kwargs.setdefault("error_handler", self._handle_error)
+        return super()._http_request(*args, **kwargs)
 
     # -- envelope helpers --------------------------------------------------- #
 
@@ -253,7 +278,6 @@ class Client(BaseClient):
             ok_codes=(200, 201, 204),
             return_empty_response=True,
         )
-
 
     # -- Other -------------------------------------------------------------- #
 
@@ -652,8 +676,9 @@ def case_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
         ),
     )
 
-_EVENTFLOW_POLL_INTERVAL = 10   # seconds between list_cases polls
-_EVENTFLOW_MAX_ATTEMPTS  = 12   # 12 × 10 s = 120 s max wait
+
+_EVENTFLOW_POLL_INTERVAL = 10  # seconds between list_cases polls
+_EVENTFLOW_MAX_ATTEMPTS = 12  # 12 × 10 s = 120 s max wait
 
 
 def case_create_command(client: Client, eventflow_client: Client, args: dict[str, Any]) -> CommandResults:
@@ -688,12 +713,9 @@ def case_create_command(client: Client, eventflow_client: Client, args: dict[str
     # Poll until the new case surfaces in the case list.
     new_case: dict[str, Any] | None = None
     for _ in range(_EVENTFLOW_MAX_ATTEMPTS):
-        time.sleep(_EVENTFLOW_POLL_INTERVAL)
+        time.sleep(_EVENTFLOW_POLL_INTERVAL)  # pylint: disable=E9003
         cases = client.list_cases()
-        fresh = [
-            c for c in cases
-            if str(c.get("id")) not in existing_ids and c.get("subject") == subject
-        ]
+        fresh = [c for c in cases if str(c.get("id")) not in existing_ids and c.get("subject") == subject]
         if fresh:
             new_case = max(fresh, key=lambda c: c.get("last_update") or 0)
             break
@@ -1050,14 +1072,17 @@ COMMAND_HANDLERS = {
     "on2it-people-search": people_search_command,
 }
 
-_PROTECTSURFACE_COMMANDS = frozenset({
-    "on2it-protectsurface-list",
-    "on2it-protectsurface-get",
-    "on2it-protectsurface-search",
-    "on2it-protectsurface-states-list",
-    "on2it-state-create",
-    "on2it-state-delete",
-})
+_PROTECTSURFACE_COMMANDS = frozenset(
+    {
+        "on2it-protectsurface-list",
+        "on2it-protectsurface-get",
+        "on2it-protectsurface-search",
+        "on2it-protectsurface-states-list",
+        "on2it-state-create",
+        "on2it-state-delete",
+    }
+)
+
 
 def _build_client(params: dict[str, Any], creds_key: str = "credentials") -> Client:
     base_url = params.get("url") or "https://api.on2it.net/v3"
@@ -1112,7 +1137,7 @@ def main() -> None:
         if command == "on2it-case-create":
             return_results(case_create_command(client, eventflow_client, args))
             return
-        
+
         handler = COMMAND_HANDLERS.get(command)
         if handler is None:
             raise NotImplementedError(f"Command `{command}` is not implemented.")
