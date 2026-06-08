@@ -1045,6 +1045,7 @@ def get_mapping_fields_command() -> GetMappingFieldsResponse:
 
 
 COMMAND_HANDLERS = {
+    "on2it-asset-list": asset_list_command,
     "on2it-protectsurface-list": protectsurface_list_command,
     "on2it-protectsurface-get": protectsurface_get_command,
     "on2it-protectsurface-search": protectsurface_search_command,
@@ -1068,12 +1069,13 @@ COMMAND_HANDLERS = {
     "on2it-case-deescalate": case_deescalate_command,
     "on2it-case-close": case_close_command,
     "on2it-case-attach-file": case_attach_file_command,
-    "on2it-asset-list": asset_list_command,
     "on2it-people-search": people_search_command,
 }
 
 _PROTECTSURFACE_COMMANDS = frozenset(
     {
+        "on2it-asset-list",
+        "on2it-people-search",
         "on2it-protectsurface-list",
         "on2it-protectsurface-get",
         "on2it-protectsurface-search",
