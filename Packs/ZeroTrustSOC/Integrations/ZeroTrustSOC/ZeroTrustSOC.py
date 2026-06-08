@@ -1107,7 +1107,7 @@ def main() -> None:
         eventflow_client = _build_client(params, creds_key="eventflowcredentials")
 
         if command == "test-module":
-            return_results(test_module(client))
+            return_results(test_module(ps_client))
             return
 
         if command == "fetch-incidents":
