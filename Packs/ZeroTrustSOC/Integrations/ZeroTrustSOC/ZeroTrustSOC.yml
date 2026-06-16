@@ -194,6 +194,9 @@ script:
     - contextPath: On2IT.ProtectSurfaceState.protectsurface_id
       description: Owning Protect Surface ID.
       type: String
+    - contextPath: On2IT.ProtectSurfaceState.location_id
+      description: Location ID this state belongs to.
+      type: String
     - contextPath: On2IT.ProtectSurfaceState.content_type
       description: Content type of the state.
       type: String
@@ -426,6 +429,9 @@ script:
     - name: protectsurface_id
       description: ID of the Protect Surface this state belongs to.
       required: true
+    - name: location_id
+      description: ID of the Location this state belongs to.
+      required: true
     - name: content_type
       description: Type of content in this state (e.g., ipv4, hostname, azure_cloud, aws_cloud, gcp_cloud, container, user_identity).
       required: true
@@ -444,6 +450,9 @@ script:
     - contextPath: On2IT.ProtectSurfaceState.protectsurface_id
       description: Protect Surface ID.
       type: String
+    - contextPath: On2IT.ProtectSurfaceState.location_id
+      description: Location ID this state belongs to.
+      type: String
     - contextPath: On2IT.ProtectSurfaceState.content_type
       description: Content type.
       type: String
@@ -455,6 +464,66 @@ script:
     arguments:
     - name: id
       description: Unique identifier of the state to delete.
+      required: true
+  - name: on2it-location-list
+    description: List all Locations visible to the API token.
+    arguments:
+    - name: limit
+      description: Maximum number of locations to return.
+      defaultValue: "50"
+    outputs:
+    - contextPath: On2IT.Location.id
+      description: Location ID.
+      type: String
+    - contextPath: On2IT.Location.name
+      description: Location name.
+      type: String
+    - contextPath: On2IT.Location.coords
+      description: Coordinates object with lat and long.
+      type: Unknown
+  - name: on2it-location-get
+    description: Get a single Location by ID.
+    arguments:
+    - name: id
+      description: Location ID.
+      required: true
+    outputs:
+    - contextPath: On2IT.Location.id
+      description: Location ID.
+      type: String
+    - contextPath: On2IT.Location.name
+      description: Location name.
+      type: String
+    - contextPath: On2IT.Location.coords
+      description: Coordinates object with lat and long.
+      type: Unknown
+  - name: on2it-location-create
+    description: Create or replace a Location.
+    arguments:
+    - name: id
+      description: Location ID. If it exists, it will be replaced. A server-generated ID is used when omitted.
+    - name: name
+      description: Human-readable name for the location (e.g., "Datacenter Amsterdam").
+      required: true
+    - name: lat
+      description: Latitude coordinate (float).
+    - name: long
+      description: Longitude coordinate (float).
+    outputs:
+    - contextPath: On2IT.Location.id
+      description: Location ID.
+      type: String
+    - contextPath: On2IT.Location.name
+      description: Location name.
+      type: String
+    - contextPath: On2IT.Location.coords
+      description: Coordinates object with lat and long.
+      type: Unknown
+  - name: on2it-location-delete
+    description: Remove a Location by ID.
+    arguments:
+    - name: id
+      description: Unique identifier of the location to delete.
       required: true
   # - name: on2it-assessment-questions-get
   #   description: Get all base questions and answers for Zero Trust Readiness Assessments.

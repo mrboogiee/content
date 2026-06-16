@@ -171,6 +171,27 @@ class Client(BaseClient):
             return_empty_response=True,
         )
 
+    def list_locations(self) -> list[dict[str, Any]]:
+        return self._extract_items(self._http_request("GET", "/zerotrust/get-locations"))
+
+    def get_location(self, location_id: str) -> dict[str, Any] | None:
+        return self._first_item(self._http_request("GET", "/zerotrust/get-location", params={"id": location_id}))
+
+    def create_or_replace_location(self, location: dict[str, Any]) -> dict[str, Any]:
+        result = self._first_item(self._post_items("/zerotrust/create-or-replace-location", location))
+        if result is None:
+            raise DemistoException("Failed to create or replace location: API returned no data")
+        return result
+
+    def remove_location(self, location_id: str) -> dict[str, Any]:
+        return self._http_request(
+            "POST",
+            "/zerotrust/remove-location",
+            params={"id": location_id},
+            ok_codes=(200, 204),
+            return_empty_response=True,
+        )
+
     def get_all_measures(self) -> dict[str, Any]:
         return self._http_request("GET", "/zerotrust/get-all-measures")
 
@@ -331,6 +352,7 @@ def _human_state_row(state: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": state.get("id"),
         "protectsurface_id": state.get("protectsurface_id"),
+        "location_id": state.get("location_id"),
         "content_type": state.get("content_type"),
         "description": state.get("description"),
         "content_count": len(state.get("content") or []),
@@ -453,7 +475,7 @@ def protectsurface_states_list_command(client: Client, args: dict[str, Any]) -> 
         readable_output=tableToMarkdown(
             f"States for Protect Surface `{ps_id}` ({len(states)})",
             rows,
-            headers=["id", "content_type", "description", "content_count", "maintainer"],
+            headers=["id", "location_id", "content_type", "description", "content_count", "maintainer"],
         ),
     )
 
@@ -463,6 +485,7 @@ def state_create_command(client: Client, args: dict[str, Any]) -> CommandResults
     state_data = {
         "id": args["id"],
         "protectsurface_id": args["protectsurface_id"],
+        "location_id": args["location_id"],
         "content_type": args["content_type"],
         "content": argToList(args["content"]),
     }
@@ -481,7 +504,7 @@ def state_create_command(client: Client, args: dict[str, Any]) -> CommandResults
         readable_output=tableToMarkdown(
             f"State Created/Updated: `{state_data['id']}`",
             row,
-            headers=["id", "content_type", "description", "content_count", "maintainer"],
+            headers=["id", "location_id", "content_type", "description", "content_count", "maintainer"],
         ),
     )
 
@@ -491,6 +514,66 @@ def state_delete_command(client: Client, args: dict[str, Any]) -> CommandResults
     state_id = args["id"]
     client.remove_state(state_id)
     return CommandResults(readable_output=f"State `{state_id}` successfully removed.")
+
+
+def location_list_command(client: Client, args: dict[str, Any]) -> CommandResults:
+    limit = arg_to_number(args.get("limit")) or DEFAULT_FETCH_LIMIT
+    locations = client.list_locations()[:limit]
+    return CommandResults(
+        outputs_prefix="On2IT.Location",
+        outputs_key_field="id",
+        outputs=locations,
+        readable_output=tableToMarkdown(
+            f"ON2IT Locations ({len(locations)})",
+            locations,
+            headers=["id", "name", "coords"],
+        ),
+    )
+
+
+def location_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
+    location_id = args["id"]
+    location = client.get_location(location_id)
+    if not location:
+        return CommandResults(readable_output=f"No location found with id `{location_id}`.")
+    return CommandResults(
+        outputs_prefix="On2IT.Location",
+        outputs_key_field="id",
+        outputs=location,
+        readable_output=tableToMarkdown(
+            f"ON2IT Location `{location_id}`",
+            location,
+            headers=["id", "name", "coords"],
+        ),
+    )
+
+
+def location_create_command(client: Client, args: dict[str, Any]) -> CommandResults:
+    location_data: dict[str, Any] = {"name": args["name"]}
+    if "id" in args:
+        location_data["id"] = args["id"]
+    if args.get("lat") is not None and args.get("long") is not None:
+        location_data["coords"] = {
+            "lat": float(args["lat"]),
+            "long": float(args["long"]),
+        }
+    result = client.create_or_replace_location(location_data)
+    return CommandResults(
+        outputs_prefix="On2IT.Location",
+        outputs_key_field="id",
+        outputs=result,
+        readable_output=tableToMarkdown(
+            f"Location Created/Updated: `{result.get('id')}`",
+            result,
+            headers=["id", "name", "coords"],
+        ),
+    )
+
+
+def location_delete_command(client: Client, args: dict[str, Any]) -> CommandResults:
+    location_id = args["id"]
+    client.remove_location(location_id)
+    return CommandResults(readable_output=f"Location `{location_id}` successfully removed.")
 
 
 # --------------------------------------------------------------------------- #
@@ -1052,6 +1135,10 @@ COMMAND_HANDLERS = {
     "on2it-protectsurface-states-list": protectsurface_states_list_command,
     "on2it-state-create": state_create_command,
     "on2it-state-delete": state_delete_command,
+    "on2it-location-list": location_list_command,
+    "on2it-location-get": location_get_command,
+    "on2it-location-create": location_create_command,
+    "on2it-location-delete": location_delete_command,
     # "on2it-assessment-questions-get": assessment_questions_get_command,
     # "on2it-assessment-create": assessment_create_command,
     # "on2it-assessment-get": assessment_get_command,
@@ -1082,6 +1169,10 @@ _PROTECTSURFACE_COMMANDS = frozenset(
         "on2it-protectsurface-states-list",
         "on2it-state-create",
         "on2it-state-delete",
+        "on2it-location-list",
+        "on2it-location-get",
+        "on2it-location-create",
+        "on2it-location-delete",
     }
 )
 
