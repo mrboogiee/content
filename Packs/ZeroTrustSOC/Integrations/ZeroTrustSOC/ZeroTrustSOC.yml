@@ -433,8 +433,18 @@ script:
       description: ID of the Location this state belongs to.
       required: true
     - name: content_type
-      description: Type of content in this state (e.g., ipv4, hostname, azure_cloud, aws_cloud, gcp_cloud, container, user_identity).
+      description: Type of content in this state.
+      auto: PREDEFINED
       required: true
+      predefined:
+      - azure_cloud
+      - aws_cloud
+      - gcp_cloud
+      - container
+      - hostname
+      - user_identity
+      - ipv4
+      - ipv6
     - name: content
       description: List of content values (comma-separated or array).
       required: true

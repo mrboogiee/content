@@ -2,7 +2,7 @@
     "name": "Zero Trust SOC",
     "description": "Integrate Cortex XSIAM with Zero Trust SOC: link cases, mirror state, and look up Protect Surfaces by their content type (cloud resource IDs, hostnames, IPs, identities).",
     "support": "partner",
-    "currentVersion": "0.0.1",
+    "currentVersion": "0.0.3",
     "author": "ON2IT",
     "url": "https://on2it.net",
     "email": "servicedesk@on2it.net",
