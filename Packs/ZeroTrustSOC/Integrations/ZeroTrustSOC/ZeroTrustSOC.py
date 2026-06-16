@@ -498,121 +498,121 @@ def state_delete_command(client: Client, args: dict[str, Any]) -> CommandResults
 # --------------------------------------------------------------------------- #
 
 
-def assessment_questions_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """Get base questions for Zero Trust Readiness Assessments."""
-    result = client.get_base_questions()
-    items = result.get("items", [])
+# def assessment_questions_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """Get base questions for Zero Trust Readiness Assessments."""
+#     result = client.get_base_questions()
+#     items = result.get("items", [])
 
-    return CommandResults(
-        outputs_prefix="On2IT.AssessmentQuestions",
-        outputs=result,
-        readable_output=tableToMarkdown(
-            f"Zero Trust Readiness Assessment Base Questions ({len(items)})",
-            items if items else result,
-        ),
-    )
-
-
-def assessment_create_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """Create a new Zero Trust Readiness Assessment."""
-    assessment_data = {
-        "assessment_timestamp": args.get("timestamp", int(datetime.now(UTC).timestamp())),
-    }
-
-    # Parse answers as JSON if provided
-    if "answers" in args:
-        try:
-            assessment_data["answers"] = json.loads(args["answers"])
-        except json.JSONDecodeError as e:
-            raise DemistoException(f"Invalid JSON in answers parameter: {e}")
-
-    result = client.create_assessment(assessment_data)
-
-    return CommandResults(
-        outputs_prefix="On2IT.Assessment",
-        outputs_key_field="id",
-        outputs=result,
-        readable_output=tableToMarkdown(
-            "Assessment Created",
-            result,
-            headers=["id", "assessment_timestamp"],
-        ),
-    )
+#     return CommandResults(
+#         outputs_prefix="On2IT.AssessmentQuestions",
+#         outputs=result,
+#         readable_output=tableToMarkdown(
+#             f"Zero Trust Readiness Assessment Base Questions ({len(items)})",
+#             items if items else result,
+#         ),
+#     )
 
 
-def assessment_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """Get a specific assessment by ID."""
-    assessment_id = args["id"]
-    result = client.get_assessment_by_id(assessment_id)
+# def assessment_create_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """Create a new Zero Trust Readiness Assessment."""
+#     assessment_data = {
+#         "assessment_timestamp": args.get("timestamp", int(datetime.now(UTC).timestamp())),
+#     }
 
-    if not result:
-        return CommandResults(readable_output=f"No assessment found with id `{assessment_id}`.")
+#     # Parse answers as JSON if provided
+#     if "answers" in args:
+#         try:
+#             assessment_data["answers"] = json.loads(args["answers"])
+#         except json.JSONDecodeError as e:
+#             raise DemistoException(f"Invalid JSON in answers parameter: {e}")
 
-    return CommandResults(
-        outputs_prefix="On2IT.Assessment",
-        outputs_key_field="id",
-        outputs=result,
-        readable_output=tableToMarkdown(
-            f"Assessment: {assessment_id}",
-            result,
-            headers=["id", "assessment_timestamp"],
-        ),
-    )
+#     result = client.create_assessment(assessment_data)
 
-
-def assessment_list_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """List Zero Trust Readiness Assessments with pagination."""
-    params = {}
-
-    if "page_number" in args:
-        params["page_number"] = arg_to_number(args["page_number"], arg_name="page_number")
-    if "page_size" in args:
-        params["page_size"] = arg_to_number(args["page_size"], arg_name="page_size")
-    if "sort" in args:
-        params["sort"] = args["sort"]
-
-    assessments = client.list_assessments(params)
-
-    return CommandResults(
-        outputs_prefix="On2IT.Assessment",
-        outputs_key_field="id",
-        outputs=assessments,
-        readable_output=tableToMarkdown(
-            f"Zero Trust Readiness Assessments ({len(assessments)})",
-            assessments,
-            headers=["id", "assessment_timestamp"],
-        ),
-    )
+#     return CommandResults(
+#         outputs_prefix="On2IT.Assessment",
+#         outputs_key_field="id",
+#         outputs=result,
+#         readable_output=tableToMarkdown(
+#             "Assessment Created",
+#             result,
+#             headers=["id", "assessment_timestamp"],
+#         ),
+#     )
 
 
-def assessment_summary_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """Get assessments summary with pagination."""
-    params = {}
+# def assessment_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """Get a specific assessment by ID."""
+#     assessment_id = args["id"]
+#     result = client.get_assessment_by_id(assessment_id)
 
-    if "page_number" in args:
-        params["page_number"] = arg_to_number(args["page_number"], arg_name="page_number")
-    if "page_size" in args:
-        params["page_size"] = arg_to_number(args["page_size"], arg_name="page_size")
-    if "sort" in args:
-        params["sort"] = args["sort"]
+#     if not result:
+#         return CommandResults(readable_output=f"No assessment found with id `{assessment_id}`.")
 
-    summaries = client.get_assessments_summary(params)
-
-    return CommandResults(
-        outputs_prefix="On2IT.AssessmentSummary",
-        outputs=summaries,
-        readable_output=tableToMarkdown(
-            f"Assessment Summaries ({len(summaries)})",
-            summaries,
-        ),
-    )
+#     return CommandResults(
+#         outputs_prefix="On2IT.Assessment",
+#         outputs_key_field="id",
+#         outputs=result,
+#         readable_output=tableToMarkdown(
+#             f"Assessment: {assessment_id}",
+#             result,
+#             headers=["id", "assessment_timestamp"],
+#         ),
+#     )
 
 
-def assessment_delete_command(client: Client, args: dict[str, Any]) -> CommandResults:
-    """Remove an assessment by ID."""
-    assessment_id = args["id"]
-    client.remove_assessment_by_id(assessment_id)
-    return CommandResults(readable_output=f"Assessment `{assessment_id}` successfully removed.")
+# def assessment_list_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """List Zero Trust Readiness Assessments with pagination."""
+#     params = {}
+
+#     if "page_number" in args:
+#         params["page_number"] = arg_to_number(args["page_number"], arg_name="page_number")
+#     if "page_size" in args:
+#         params["page_size"] = arg_to_number(args["page_size"], arg_name="page_size")
+#     if "sort" in args:
+#         params["sort"] = args["sort"]
+
+#     assessments = client.list_assessments(params)
+
+#     return CommandResults(
+#         outputs_prefix="On2IT.Assessment",
+#         outputs_key_field="id",
+#         outputs=assessments,
+#         readable_output=tableToMarkdown(
+#             f"Zero Trust Readiness Assessments ({len(assessments)})",
+#             assessments,
+#             headers=["id", "assessment_timestamp"],
+#         ),
+#     )
+
+
+# def assessment_summary_get_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """Get assessments summary with pagination."""
+#     params = {}
+
+#     if "page_number" in args:
+#         params["page_number"] = arg_to_number(args["page_number"], arg_name="page_number")
+#     if "page_size" in args:
+#         params["page_size"] = arg_to_number(args["page_size"], arg_name="page_size")
+#     if "sort" in args:
+#         params["sort"] = args["sort"]
+
+#     summaries = client.get_assessments_summary(params)
+
+#     return CommandResults(
+#         outputs_prefix="On2IT.AssessmentSummary",
+#         outputs=summaries,
+#         readable_output=tableToMarkdown(
+#             f"Assessment Summaries ({len(summaries)})",
+#             summaries,
+#         ),
+#     )
+
+
+# def assessment_delete_command(client: Client, args: dict[str, Any]) -> CommandResults:
+#     """Remove an assessment by ID."""
+#     assessment_id = args["id"]
+#     client.remove_assessment_by_id(assessment_id)
+#     return CommandResults(readable_output=f"Assessment `{assessment_id}` successfully removed.")
 
 
 # --------------------------------------------------------------------------- #
@@ -1052,12 +1052,12 @@ COMMAND_HANDLERS = {
     "on2it-protectsurface-states-list": protectsurface_states_list_command,
     "on2it-state-create": state_create_command,
     "on2it-state-delete": state_delete_command,
-    "on2it-assessment-questions-get": assessment_questions_get_command,
-    "on2it-assessment-create": assessment_create_command,
-    "on2it-assessment-get": assessment_get_command,
-    "on2it-assessment-list": assessment_list_command,
-    "on2it-assessment-summary-get": assessment_summary_get_command,
-    "on2it-assessment-delete": assessment_delete_command,
+    # "on2it-assessment-questions-get": assessment_questions_get_command,
+    # "on2it-assessment-create": assessment_create_command,
+    # "on2it-assessment-get": assessment_get_command,
+    # "on2it-assessment-list": assessment_list_command,
+    # "on2it-assessment-summary-get": assessment_summary_get_command,
+    # "on2it-assessment-delete": assessment_delete_command,
     "on2it-case-list": case_list_command,
     "on2it-case-get": case_get_command,
     "on2it-case-link": case_link_command,

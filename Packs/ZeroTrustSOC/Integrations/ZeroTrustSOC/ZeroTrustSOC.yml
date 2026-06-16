@@ -456,71 +456,71 @@ script:
     - name: id
       description: Unique identifier of the state to delete.
       required: true
-  - name: on2it-assessment-questions-get
-    description: Get all base questions and answers for Zero Trust Readiness Assessments.
-    outputs:
-    - contextPath: On2IT.AssessmentQuestions
-      description: Base questions and answer options for assessments.
-      type: Unknown
-  - name: on2it-assessment-create
-    description: Create a new Zero Trust Readiness Assessment.
-    arguments:
-    - name: timestamp
-      description: Unix timestamp for the assessment. Defaults to current time if not provided.
-    - name: answers
-      description: JSON object containing the assessment answers.
-    outputs:
-    - contextPath: On2IT.Assessment.id
-      description: Assessment ID.
-      type: String
-    - contextPath: On2IT.Assessment.assessment_timestamp
-      description: Timestamp of the assessment.
-      type: Number
-  - name: on2it-assessment-get
-    description: Get a specific Zero Trust Readiness Assessment by ID.
-    arguments:
-    - name: id
-      description: Unique identifier of the assessment.
-      required: true
-    outputs:
-    - contextPath: On2IT.Assessment.id
-      description: Assessment ID.
-      type: String
-    - contextPath: On2IT.Assessment.assessment_timestamp
-      description: Timestamp of the assessment.
-      type: Number
-  - name: on2it-assessment-list
-    description: List all Zero Trust Readiness Assessments with pagination.
-    arguments:
-    - name: page_number
-      description: Page number to retrieve (default 1).
-    - name: page_size
-      description: Number of results per page (default 100).
-    - name: sort
-      description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
-    outputs:
-    - contextPath: On2IT.Assessment.id
-      description: Assessment ID.
-      type: String
-    - contextPath: On2IT.Assessment.assessment_timestamp
-      description: Timestamp of the assessment.
-      type: Number
-  - name: on2it-assessment-summary-get
-    description: Get a summary of Zero Trust Readiness Assessments with pagination.
-    arguments:
-    - name: page_number
-      description: Page number to retrieve (default 1).
-    - name: page_size
-      description: Number of results per page (default 100).
-    - name: sort
-      description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
-    outputs:
-    - contextPath: On2IT.AssessmentSummary
-      description: Summary data for assessments.
-      type: Unknown
-  - name: on2it-assessment-delete
-    description: Remove a Zero Trust Readiness Assessment by ID.
-    arguments:
-    - name: id
-      description: Unique identifier of the assessment to delete.
-      required: true
+  # - name: on2it-assessment-questions-get
+  #   description: Get all base questions and answers for Zero Trust Readiness Assessments.
+  #   outputs:
+  #   - contextPath: On2IT.AssessmentQuestions
+  #     description: Base questions and answer options for assessments.
+  #     type: Unknown
+  # - name: on2it-assessment-create
+  #   description: Create a new Zero Trust Readiness Assessment.
+  #   arguments:
+  #   - name: timestamp
+  #     description: Unix timestamp for the assessment. Defaults to current time if not provided.
+  #   - name: answers
+  #     description: JSON object containing the assessment answers.
+  #   outputs:
+  #   - contextPath: On2IT.Assessment.id
+  #     description: Assessment ID.
+  #     type: String
+  #   - contextPath: On2IT.Assessment.assessment_timestamp
+  #     description: Timestamp of the assessment.
+  #     type: Number
+  # - name: on2it-assessment-get
+  #   description: Get a specific Zero Trust Readiness Assessment by ID.
+  #   arguments:
+  #   - name: id
+  #     description: Unique identifier of the assessment.
+  #     required: true
+  #   outputs:
+  #   - contextPath: On2IT.Assessment.id
+  #     description: Assessment ID.
+  #     type: String
+  #   - contextPath: On2IT.Assessment.assessment_timestamp
+  #     description: Timestamp of the assessment.
+  #     type: Number
+  # - name: on2it-assessment-list
+  #   description: List all Zero Trust Readiness Assessments with pagination.
+  #   arguments:
+  #   - name: page_number
+  #     description: Page number to retrieve (default 1).
+  #   - name: page_size
+  #     description: Number of results per page (default 100).
+  #   - name: sort
+  #     description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
+  #   outputs:
+  #   - contextPath: On2IT.Assessment.id
+  #     description: Assessment ID.
+  #     type: String
+  #   - contextPath: On2IT.Assessment.assessment_timestamp
+  #     description: Timestamp of the assessment.
+  #     type: Number
+  # - name: on2it-assessment-summary-get
+  #   description: Get a summary of Zero Trust Readiness Assessments with pagination.
+  #   arguments:
+  #   - name: page_number
+  #     description: Page number to retrieve (default 1).
+  #   - name: page_size
+  #     description: Number of results per page (default 100).
+  #   - name: sort
+  #     description: Sort order (e.g., "assessment_timestamp" or "-assessment_timestamp" for descending).
+  #   outputs:
+  #   - contextPath: On2IT.AssessmentSummary
+  #     description: Summary data for assessments.
+  #     type: Unknown
+  # - name: on2it-assessment-delete
+  #   description: Remove a Zero Trust Readiness Assessment by ID.
+  #   arguments:
+  #   - name: id
+  #     description: Unique identifier of the assessment to delete.
+  #     required: true
