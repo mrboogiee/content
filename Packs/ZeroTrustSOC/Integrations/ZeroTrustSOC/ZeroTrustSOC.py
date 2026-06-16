@@ -295,7 +295,6 @@ class Client(BaseClient):
             "POST",
             "/eventflow/store-events",
             data=event_b64,
-            headers={"Content-Type": "text/plain"},
             ok_codes=(200, 201, 204),
             return_empty_response=True,
         )
